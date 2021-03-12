@@ -43,5 +43,8 @@
   {{if eq $key "index"}}
   {{ $key }}: "{{ $value }}-%{+yyyy.MM.dd}"
   {{end}}
+  {{if eq $key "pipeline"}}
+  {{ $key }}: "{{ $value }}"
+  {{end}}
   {{end}}
 {{end}}

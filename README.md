@@ -1,5 +1,30 @@
 log-pilot
 =========
+注意：该项来自于阿里云团队，但貌似他们放弃维护了，感谢另一位开发者添加了ES7.x的支持（原来只支持6.x)，我在此基础上添加了pipeline的支持，可以直接分解log内容（当然也可能通过logstash来处理）
+Attention: This Project is fork from Aliyun, but look like they no longer maintain this project. Thanks hebaodanroot
+ add ES7.x support and I added pipeline support to his code.
+Use special tag label like aliyun.logs.name.tags="pipeline=pipname" can let filebeat use a pipeline to parse log message.
+example
+```
+# add a pipleline for log parse, this is for springboot app
+PUT _ingest/pipeline/springboot-log
+{
+    "description" : "springboot log pipeline",
+    "processors": [
+        {
+            "grok": {
+                "field": "message",
+                "patterns": ["^%{TIMESTAMP_ISO8601:log_time}%{SPACE}%{LOGLEVEL:log_level}%{SPACE}%{NUMBER:log_pid}%{SPACE}---%{SPACE}%{SYSLOG5424SD:log_thread_name}%{SPACE}%{NOTSPACE:log_class}%{SPACE}:%{SPACE}%{GREEDYDATA:log_message}"]
+            }
+        }
+    ]
+}
+
+# add label for your container
+# some docker-compose code 
+--label aliyun.logs.app.tags="pipeline=springboot-log"
+```
+
 
 [![CircleCI](https://circleci.com/gh/AliyunContainerService/log-pilot.svg?style=svg)](https://circleci.com/gh/AliyunContainerService/log-pilot)
 [![Go Report Card](https://goreportcard.com/badge/github.com/AliyunContainerService/log-pilot)](https://goreportcard.com/report/github.com/AliyunContainerService/log-pilot)
